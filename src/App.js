@@ -1,24 +1,27 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ServiceProvider } from './context/ServiceContext';
+import Calendar from './pages/Calendar/Calendar';
+import Barber from './pages/Barber/Barber';
+import Service from './pages/Service/Service';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ServiceProvider>
+        <div className="app">
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Navigate to="/calendar" />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/barber" element={<Barber />} />
+              <Route path="/service" element={<Service />} />
+            </Routes>
+          </main>
+        </div>
+      </ServiceProvider>
+    </Router>
   );
 }
 
