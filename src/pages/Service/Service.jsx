@@ -4,6 +4,7 @@ import { useServiceContext } from '../../context/ServiceContext';
 import { clientService } from '../../services/clientService';
 import { materialService } from '../../services/materialService';
 import { serviceService } from '../../services/serviceService';
+import { operationService } from '../../services/operationService';
 import ClientSelect from '../../components/forms/ClientSelect';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
@@ -21,6 +22,8 @@ const Service = () => {
   const [success, setSuccess] = useState(false);
   const [barberData, setBarberData] = useState(null);
   const [hairstyleData, setHairstyleData] = useState(null);
+  const [operations, setOperations] = useState([]);           // all available operations
+  const [selectedOperations, setSelectedOperations] = useState([]); // array of selected operation IDs
 
   const location = useLocation();
   const { serviceData, updateService, updateBarber, updateHairstyle, resetService } = useServiceContext();
@@ -110,9 +113,10 @@ const Service = () => {
         setError('');
         console.log('🔍 Service page: Fetching clients and materials...');
         
-        const [clientsRes, materialsRes] = await Promise.all([
+        const [clientsRes, materialsRes, operationsRes] = await Promise.all([
           clientService.getAll(),
           materialService.getAll(),
+          operationService.getAll(),
         ]);
 
         console.log('📦 Clients response:', clientsRes);
@@ -120,8 +124,9 @@ const Service = () => {
 
         if (clientsRes.success) setClients(clientsRes.data);
         if (materialsRes.success) setMaterials(materialsRes.data);
+        if (operationsRes.success) setOperations(operationsRes.data);
         
-        if (!clientsRes.success || !materialsRes.success) {
+        if (!clientsRes.success || !materialsRes.success || !operationsRes.success) {
           setError('Failed to load data');
         }
       } catch (err) {
@@ -206,6 +211,14 @@ const Service = () => {
     }
   };
 
+  const handleOperationChange = (operationId) => {
+  setSelectedOperations((prev) =>
+    prev.includes(operationId)
+      ? prev.filter((id) => id !== operationId)
+      : [...prev, operationId]
+  );
+};
+
   // ===== Submit =====
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -278,6 +291,7 @@ const Service = () => {
         hairstyle: {
           _id: serviceData.hairstyle._id,
         },
+        operations: selectedOperations.map((opId) => ({ operationId: opId })),
         materials: selectedMaterials.map((m) => ({
           materialId: m.materialId,
           quantityUsed: m.quantityUsed,
@@ -483,8 +497,44 @@ const Service = () => {
           </div>
         </Card>
 
+<Card title="Operations">
+  <p className="hint">Enter OPERATIONS you want to use in this service</p>
+  <div className="operations-list">
+    {operations.map((operation) => (
+      <div key={operation._id} className="operation-item">
+        <span className="operation-name">
+          {operation.name} (${operation.price}) - {operation.duration}min
+        </span>
+        <input
+          type="checkbox"
+          className="operation-checkbox"
+          checked={selectedOperations.includes(operation._id)}
+          onChange={() => handleOperationChange(operation._id)}
+        />
+      </div>
+    ))}
+  </div>
+
+  {selectedOperations.length > 0 && (
+    <div className="selected-operations">
+      <h4>Selected Operations:</h4>
+      {selectedOperations.map((opId) => {
+        const op = operations.find((o) => o._id === opId);
+        if (!op) return null;
+        return (
+          <div key={opId} className="selected-operation">
+            <span>
+              {op.name} - ${op.price} ({op.duration}min)
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  )}
+</Card>
+
         <Card title="Materials Used">
-          <p className="hint">Enter quantities for materials you want to use in this service</p>
+          <p className="hint">Enter QUANTITIES FOR MATERIALS you want to use in this service</p>
           
           <div className="materials-list">
             {materials.map((material) => (

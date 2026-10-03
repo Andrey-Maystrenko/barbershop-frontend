@@ -197,6 +197,61 @@
   flex: 1;
 }
 
+/* ===== OPERATIONS LIST ===== */
+.operations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.operation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.operation-name {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.operation-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+/* ===== SELECTED OPERATIONS ===== */
+.selected-operations {
+  background: #e3f2fd;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 4px solid #2196f3;
+}
+
+.selected-operations h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #1565c0;
+  font-size: 15px;
+}
+
+.selected-operation {
+  padding: 4px 0;
+  color: #333;
+  font-size: 14px;
+}
+
 /* ===== MATERIALS LIST ===== */
 .materials-list {
   display: flex;
