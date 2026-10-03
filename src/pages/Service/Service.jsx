@@ -156,6 +156,18 @@ const Service = () => {
     return total;
   };
 
+  const calculateOperationsTotalCost = () => {
+    let total = 0;
+    // console.log("selectedOperations", selectedOperations)
+    selectedOperations.forEach((opId) => {
+      const operation = operations.find((o) => o._id === opId);
+      if (operation) {
+        total += operation.price;
+      }
+    })
+    return total;
+  }
+
   // ===== Calculate barber cost automatically =====
   const calculateBarberCost = () => {
     const hairstylePrice = hairstyleData?.price || 0;
@@ -384,6 +396,8 @@ const Service = () => {
   const currentBarberCost = calculateBarberCost();
   const currentHairstylePrice = hairstyleData?.price || 0;
   const currentOverhead = parseFloat(formData.overhead) || 0;
+  const currentOperationsCost = calculateOperationsTotalCost();
+  console.log("📦 Current Operations Cost:", currentOperationsCost);
   // const shopProfit = currentHairstylePrice - currentMaterialCost - currentOverhead - currentBarberCost;
   const shopProfit = currentBarberCost;
 
@@ -447,6 +461,10 @@ const Service = () => {
               <div className="cost-value">${currentHairstylePrice.toFixed(2)}</div>
             </div>
             <div className="cost-display">
+              <label>Operations Cost</label>
+              <div className="cost-value">${currentOperationsCost.toFixed(2)}</div>
+            </div>
+            <div className="cost-display">
               <label>Materials Cost</label>
               <div className="cost-value">${currentMaterialCost.toFixed(2)}</div>
             </div>
@@ -470,9 +488,13 @@ const Service = () => {
           </div>
 
           <div className="cost-summary">
-            <div className="cost-row-summary">
+            {/* <div className="cost-row-summary">
               <span>Hairstyle Price:</span>
               <span>${currentHairstylePrice.toFixed(2)}</span>
+            </div> */}
+            <div className="cost-row-summary">
+              <span>Operations:</span>
+              <span>${currentOperationsCost.toFixed(2)}</span>
             </div>
             <div className="cost-row-summary">
               <span>+ Materials:</span>
@@ -484,7 +506,7 @@ const Service = () => {
             </div>
             <div className="cost-row-summary divider">
               <span>= Total:</span>
-              <span>${(currentHairstylePrice + currentMaterialCost + currentOverhead).toFixed(2)}</span>
+              <span>${(currentOperationsCost + currentMaterialCost + currentOverhead).toFixed(2)}</span>
             </div>
             {/* <div className="cost-row-summary highlight">
               <span>👤 Barber (50%):</span>

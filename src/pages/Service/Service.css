@@ -197,6 +197,30 @@
   flex: 1;
 }
 
+/* .cost-row-summary {
+  display: flex;
+  justify-content:center;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.cost-row-summary .label {
+  position: relative;
+  padding-right: 15px;
+  min-width: 500px;
+}
+
+.cost-row-summary .label::after {
+  content: ':';
+  position: absolute;
+  left: 0;
+}
+
+.cost-row-summary .value {
+  text-align: right;
+} */
+
 /* ===== OPERATIONS LIST ===== */
 .operations-list {
   display: flex;
