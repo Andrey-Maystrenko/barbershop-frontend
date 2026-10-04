@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useServiceContext } from '../../context/ServiceContext';
 import { barberService } from '../../services/barberService';
+import { useLocation } from 'react-router-dom';  // ← Add this import
 import BarberSelect from '../../components/forms/BarberSelect';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -17,6 +18,7 @@ const Calendar = () => {
   const [error, setError] = useState('');
   const { updateBarber, updateService, resetService } = useServiceContext();
   const hasFetched = useRef(false);
+  const location = useLocation();
 
   useEffect(() => {
     // Prevent double fetch
@@ -51,10 +53,19 @@ const Calendar = () => {
     fetchBarbers();
 
     // Set default date
-    const today = new Date().toISOString().split('T')[0];
-    setSelectedDate(today);
-    updateService({ scheduledDate: today, scheduledTime: '09:00' });
-  }, [resetService, updateService]);
+    //   const today = new Date().toISOString().split('T')[0];
+    //   setSelectedDate(today);
+    //   updateService({ scheduledDate: today, scheduledTime: '09:00' });
+    // }, [resetService, updateService]);
+
+    // ✅ Read date from URL or use today
+    const params = new URLSearchParams(location.search);
+    const urlDate = params.get('date');
+    const defaultDate = urlDate || new Date().toISOString().split('T')[0];
+
+    setSelectedDate(defaultDate);
+    updateService({ scheduledDate: defaultDate, scheduledTime: '09:00' });
+  }, [resetService, updateService, location.search]);  // ← Add location.search
 
   const handleBarberChange = (e) => {
     const barberId = e.target.value

@@ -1,4 +1,4 @@
-.page-container {
+/* .page-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -9,9 +9,9 @@
   font-size: 2.5rem;
   margin-bottom: 10px;
   color: #333;
-}
+} */
 
-.subtitle {
+/* .subtitle {
   color: #666;
   margin-bottom: 30px;
 }
@@ -27,9 +27,9 @@
 
 .button-container {
   margin-top: 20px;
-}
+} */
 
-.error-message {
+/* .error-message {
   background: #ffebee;
   color: #c62828;
   padding: 16px;
@@ -42,5 +42,233 @@
   .date-time-row {
     flex-direction: column;
     gap: 0;
+  }
+} */
+
+/* ===== PAGE ===== */
+.timetable-page {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 40px);
+}
+
+/* ===== HEADER ===== */
+.timetable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.month-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 6px;
+}
+
+.month-title h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: #333;
+  font-weight: 700;
+}
+
+.today-button {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.today-button:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.nav-button {
+  background: white;
+  border: 2px solid #ddd;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.nav-button:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  transform: scale(1.05);
+}
+
+/* ===== WEEK DAYS ===== */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.weekday {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+  padding: 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== CALENDAR GRID ===== */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;       /* ← cells grow to fill available height */
+  gap: 6px;
+  flex: 1;                    /* ← take all remaining vertical space */
+  min-height: 0;              /* ← allow grid to shrink if needed */
+}
+
+.day-cell {
+  position: relative;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 8px;
+  transition: all 0.2s;
+  min-height: 60px;
+  overflow: hidden;
+}
+
+.day-cell:not(.empty):hover {
+  background: #e9ecef;
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+.day-cell.empty {
+  background: transparent;
+  border: 1px dashed #f0f0f0;
+}
+
+.day-cell.today {
+  background: #e3f2fd;
+  border: 2px solid #2196f3;
+}
+
+.day-cell.today .day-number {
+  color: #1565c0;
+  font-weight: 800;
+}
+
+/* ===== DAY NUMBER ===== */
+.day-number {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ===== ADD BUTTON ===== */
+.add-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.2s;
+  opacity: 0.85;
+}
+
+.add-button:hover {
+  background: #0056b3;
+  transform: scale(1.15);
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 700px) {
+  .timetable-page {
+    padding: 10px;
+    min-height: calc(100vh - 20px);
+  }
+
+  .month-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .nav-button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .day-number {
+    font-size: 13px;
+    top: 5px;
+    left: 6px;
+  }
+
+  .add-button {
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+    top: 4px;
+    right: 4px;
+  }
+
+  .weekday {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 450px) {
+  .day-number {
+    font-size: 12px;
+  }
+
+  .add-button {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
   }
 }
