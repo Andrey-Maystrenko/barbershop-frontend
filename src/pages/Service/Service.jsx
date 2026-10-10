@@ -169,14 +169,14 @@ const Service = () => {
   }
 
   // ===== Calculate barber cost automatically =====
-  const calculateBarberCost = () => {
-    const hairstylePrice = hairstyleData?.price || 0;
-    const materialCost = calculateMaterialTotalCost();
-    const overhead = parseFloat(formData.overhead) || 0;
-    // const result = (hairstylePrice - materialCost - overhead) / 2;
-    const result = hairstylePrice / 2;
-    return result > 0 ? result : 0;
-  };
+  // const calculateBarberCost = () => {
+  //   const hairstylePrice = hairstyleData?.price || 0;
+  //   const materialCost = calculateMaterialTotalCost();
+  //   const overhead = parseFloat(formData.overhead) || 0;
+  //   // const result = (hairstylePrice - materialCost - overhead) / 2;
+  //   const result = hairstylePrice / 2;
+  //   return result > 0 ? result : 0;
+  // };
 
   // ===== Handlers =====
   const handleClientChange = (e) => {
@@ -393,13 +393,13 @@ const Service = () => {
 
   // ===== Calculate current values for display =====
   const currentMaterialCost = calculateMaterialTotalCost();
-  const currentBarberCost = calculateBarberCost();
+  // const currentBarberCost = calculateBarberCost();
   const currentHairstylePrice = hairstyleData?.price || 0;
   const currentOverhead = parseFloat(formData.overhead) || 0;
   const currentOperationsCost = calculateOperationsTotalCost();
   console.log("📦 Current Operations Cost:", currentOperationsCost);
   // const shopProfit = currentHairstylePrice - currentMaterialCost - currentOverhead - currentBarberCost;
-  const shopProfit = currentBarberCost;
+  // const shopProfit = currentBarberCost;
 
   return (
     <div className="page-container">
@@ -483,7 +483,10 @@ const Service = () => {
             />
             <div className="cost-display">
               <label>Barber Cost (Auto-calculated)</label>
-              <div className="cost-value barber-cost">${currentBarberCost.toFixed(2)}</div>
+              {/* <div className="cost-value barber-cost">${currentBarberCost.toFixed(2)}</div> */}
+              <div className="cost-value barber-cost">${(currentOperationsCost / 2).toFixed(2)}</div>
+
+              
             </div>
           </div>
 

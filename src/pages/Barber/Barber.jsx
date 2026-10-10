@@ -14,10 +14,10 @@ const Barber = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [barberData, setBarberData] = useState(null);
-  
+
   const location = useLocation();
   const { serviceData, updateHairstyle, updateBarber, updateService } = useServiceContext();
-  
+
   // ✅ Use ref to track if data has been fetched (same as Calendar page)
   const hasFetched = useRef(false);
   // ✅ Track if URL params have been processed
@@ -26,7 +26,7 @@ const Barber = () => {
   // ===== Process URL params (runs once) =====
   useEffect(() => {
     if (hasProcessedParams.current) return;
-    
+
     const params = new URLSearchParams(location.search);
     const barberId = params.get('barberId');
     const barberName = params.get('barberName');
@@ -79,10 +79,10 @@ const Barber = () => {
         setLoading(true);
         setError('');
         console.log('🔍 Barber page: Fetching hairstyles...');
-        
+
         const response = await hairstyleService.getAll();
         console.log('📦 Barber page: Hairstyles response:', response);
-        
+
         if (response && response.success) {
           console.log('✅ Hairstyles loaded:', response.data.length);
           setHairstyles(response.data);
@@ -135,17 +135,23 @@ const Barber = () => {
 
     const url = `/service?${params.toString()}`;
 
-    const width = 900;
-    const height = 800;
-    const left = (window.screen.width - width) / 2;
-    const top = (window.screen.height - height) / 2;
+    // const width = 900;
+    // const height = 800;
+    // const left = (window.screen.width - width) / 2;
+    // const top = (window.screen.height - height) / 2;
 
+    // window.open(
+    //   url,
+    //   '_blank',
+    //   `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    // );
     window.open(
       url,
       '_blank',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`
     );
   };
+
 
   const goBackToCalendar = () => {
     window.close();
@@ -175,8 +181,8 @@ const Barber = () => {
           <p style={{ fontSize: '12px', color: '#666' }}>
             Make sure backend is running on port 5000
           </p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             style={{ marginTop: '10px', padding: '8px 16px', cursor: 'pointer' }}
           >
             Retry

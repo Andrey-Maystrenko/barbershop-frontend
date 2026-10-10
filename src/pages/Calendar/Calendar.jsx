@@ -137,15 +137,10 @@ const Calendar = () => {
 
     const url = `/barber?${params.toString()}`;
 
-    const width = 800;
-    const height = 700;
-    const left = (window.screen.width - width) / 2;
-    const top = (window.screen.height - height) / 2;
-
     window.open(
       url,
       '_blank',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`
     );
   };
 

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import './Timetable.css';
 
 const Timetable = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // ===== Get current month and year =====
@@ -71,14 +71,29 @@ const Timetable = () => {
   // ===== Handle "+" button click =====
   const handleAddService = (day) => {
     if (!day) return;
-    
+
     // Format date as YYYY-MM-DD
     const selectedDate = new Date(year, month, day);
-    const formattedDate = selectedDate.toISOString().split('T')[0];
-    
+    // const formattedDate = selectedDate.toISOString().split('T')[0];
+    // ✅ Format date locally (no UTC conversion)
+const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
     // Navigate to Calendar page with the selected date
-    navigate(`/calendar?date=${formattedDate}`);
+    // navigate(`/calendar?date=${formattedDate}`);
+
+    // ✅ Open in new full-scale tab
+    const url = `${window.location.origin}/calendar?date=${formattedDate}`;
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
   };
+
 
   return (
     <div className="timetable-page">
