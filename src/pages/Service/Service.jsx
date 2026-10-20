@@ -269,11 +269,11 @@ const Service = () => {
         }
       });
 
-      if (selectedMaterials.length === 0) {
-        setError('Please select at least one material with quantity > 0');
-        setSubmitting(false);
-        return;
-      }
+      // if (selectedMaterials.length === 0) {
+      //   setError('Please select at least one material with quantity > 0');
+      //   setSubmitting(false);
+      //   return;
+      // }
 
       // ===== CALCULATE BARBER COST =====
       const hairstylePrice = hairstyleData?.price || 0;
