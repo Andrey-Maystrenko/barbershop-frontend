@@ -179,6 +179,21 @@ const Timetable = () => {
     }
   };
 
+  // ===== Handle click on a record =====
+  const handleOpenService = (serviceId, e) => {
+    e.stopPropagation();
+
+    const url = `${window.location.origin}/service?serviceId=${serviceId}`;
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   return (
     <div className="timetable-page">
@@ -266,7 +281,13 @@ const Timetable = () => {
                   </div> */}
                   <div className="day-services">
                     {dayServices.map((service) => (
-                      <div key={service._id} className="service-record">
+                      // <div key={service._id} className="service-record">
+                      <div
+                        key={service._id}
+                        className="service-record"
+                        onClick={(e) => handleOpenService(service._id, e)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <span className="service-time">
                           {formatTimeRange(service.scheduledTime, service.duration)}
                         </span>

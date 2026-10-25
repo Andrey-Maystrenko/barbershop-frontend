@@ -264,6 +264,10 @@
     background: #dc3545;
 }
 
+.service-record:hover {
+    background: #e3f2fd;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 700px) {
     .timetable-page {

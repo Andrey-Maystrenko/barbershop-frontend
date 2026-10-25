@@ -22,6 +22,7 @@ const Service = () => {
   const [success, setSuccess] = useState(false);
   const [barberData, setBarberData] = useState(null);
   const [hairstyleData, setHairstyleData] = useState(null);
+  const [serviceId, setServiceId] = useState(null);
   const [operations, setOperations] = useState([]);           // all available operations
   const [selectedOperations, setSelectedOperations] = useState([]); // array of selected operation IDs
 
@@ -40,11 +41,164 @@ const Service = () => {
   // ===== MATERIAL QUANTITIES (UI state only) =====
   const [materialQuantities, setMaterialQuantities] = useState({});
 
-  // ===== Process URL params (runs once) =====
-  useEffect(() => {
-    if (hasProcessedParams.current) return;
+  // // ===== Process URL params (runs once) =====
+  // useEffect(() => {
+  //   if (hasProcessedParams.current) return;
 
-    const params = new URLSearchParams(location.search);
+  //   const params = new URLSearchParams(location.search);
+  //   const barberId = params.get('barberId');
+  //   const barberName = params.get('barberName');
+  //   const barberSpecialization = params.get('barberSpecialization');
+  //   const hairstyleId = params.get('hairstyleId');
+  //   const hairstyleName = params.get('hairstyleName');
+  //   const hairstylePrice = parseFloat(params.get('hairstylePrice')) || 0;
+  //   const hairstyleDuration = parseInt(params.get('hairstyleDuration')) || 30;
+  //   const date = params.get('date');
+  //   const time = params.get('time');
+
+  //   console.log('📥 Service page URL params:', { barberId, hairstyleId, date, time });
+
+  //   if (!barberId || !hairstyleId) {
+  //     alert('Please complete previous steps first');
+  //     window.close();
+  //     window.open('/', '_blank');
+  //     return;
+  //   }
+
+  //   const barber = {
+  //     _id: barberId,
+  //     name: barberName || 'Unknown Barber',
+  //     specialization: barberSpecialization ? barberSpecialization.split(', ') : [],
+  //   };
+  //   setBarberData(barber);
+
+  //   const hairstyle = {
+  //     _id: hairstyleId,
+  //     name: hairstyleName || 'Unknown Hairstyle',
+  //     price: hairstylePrice,
+  //     duration: hairstyleDuration,
+  //   };
+  //   setHairstyleData(hairstyle);
+
+  //   updateBarber({
+  //     _id: barberId,
+  //     firstName: barberName?.split(' ')[0] || 'Unknown',
+  //     lastName: barberName?.split(' ').slice(1).join(' ') || 'Barber',
+  //     specialization: barberSpecialization ? barberSpecialization.split(', ') : [],
+  //   });
+
+  //   updateHairstyle({
+  //     _id: hairstyleId,
+  //     name: hairstyleName || 'Unknown Hairstyle',
+  //     price: hairstylePrice,
+  //     duration: hairstyleDuration,
+  //   });
+
+  //   if (date) updateService({ scheduledDate: date });
+  //   if (time) updateService({ scheduledTime: time });
+
+  //   hasProcessedParams.current = true;
+  // }, [location.search, updateBarber, updateHairstyle, updateService]);
+
+// ===== Process URL params (runs once) =====
+useEffect(() => {
+  if (hasProcessedParams.current) return;
+
+  const params = new URLSearchParams(location.search);
+  const urlServiceId = params.get('serviceId');
+
+  // ===== CASE 1: Editing existing service (serviceId in URL) =====
+  if (urlServiceId) {
+    console.log('📥 Loading existing service:', urlServiceId);
+    setServiceId(urlServiceId);
+
+    const loadService = async () => {
+      try {
+        setLoading(true);
+        const response = await serviceService.getById(urlServiceId);
+        console.log('✅ Service loaded:', response);
+
+        if (!response.success) {
+          throw new Error(response.message || 'Service not found');
+        }
+
+        const service = response.data;
+
+        // Populate local state
+        setBarberData({
+          _id: service.barber._id,
+          name: service.barber.name,
+          specialization: service.barber.specialization || [],
+        });
+
+        setHairstyleData({
+          _id: service.hairstyle._id,
+          name: service.hairstyle.name,
+          price: service.hairstyle.price,
+          duration: service.hairstyle.duration,
+        });
+
+        // Update context so other logic (like costs) works
+        updateBarber({
+          _id: service.barber._id,
+          firstName: service.barber.name.split(' ')[0],
+          lastName: service.barber.name.split(' ').slice(1).join(' '),
+          specialization: service.barber.specialization || [],
+        });
+
+        updateHairstyle({
+          _id: service.hairstyle._id,
+          name: service.hairstyle.name,
+          price: service.hairstyle.price,
+          duration: service.hairstyle.duration,
+        });
+
+        updateService({
+          client: service.client || {},
+          scheduledDate: service.scheduledDate,
+          scheduledTime: service.scheduledTime,
+          status: service.status,
+          costs: service.costs || {},
+          pricing: service.pricing || {},
+          materials: service.materials || [],
+          operations: service.operations || [],
+        });
+
+        // Pre-fill the formData
+        setFormData({
+          clientId: service.client?._id || '',
+          status: service.status || 'pending',
+          overhead: service.costs?.overhead || 0,
+        });
+
+        // Pre-fill material quantities
+        const quantities = {};
+        if (service.materials && service.materials.length > 0) {
+          service.materials.forEach((m) => {
+            quantities[m.materialId] = m.quantityUsed;
+          });
+        }
+        setMaterialQuantities(quantities);
+
+        // Pre-fill selected operations
+        if (service.operations && service.operations.length > 0) {
+          setSelectedOperations(service.operations.map((o) => o.operationId));
+        }
+
+        console.log('✅ Form pre-filled');
+      } catch (err) {
+        console.error('❌ Error loading service:', err);
+        setError('Failed to load service: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadService();
+  }
+
+  // ===== CASE 2: Creating new service (barberId + hairstyleId in URL) =====
+  else {
     const barberId = params.get('barberId');
     const barberName = params.get('barberName');
     const barberSpecialization = params.get('barberSpecialization');
@@ -55,8 +209,6 @@ const Service = () => {
     const date = params.get('date');
     const time = params.get('time');
 
-    console.log('📥 Service page URL params:', { barberId, hairstyleId, date, time });
-
     if (!barberId || !hairstyleId) {
       alert('Please complete previous steps first');
       window.close();
@@ -64,20 +216,18 @@ const Service = () => {
       return;
     }
 
-    const barber = {
+    setBarberData({
       _id: barberId,
       name: barberName || 'Unknown Barber',
       specialization: barberSpecialization ? barberSpecialization.split(', ') : [],
-    };
-    setBarberData(barber);
+    });
 
-    const hairstyle = {
+    setHairstyleData({
       _id: hairstyleId,
       name: hairstyleName || 'Unknown Hairstyle',
       price: hairstylePrice,
       duration: hairstyleDuration,
-    };
-    setHairstyleData(hairstyle);
+    });
 
     updateBarber({
       _id: barberId,
@@ -95,9 +245,10 @@ const Service = () => {
 
     if (date) updateService({ scheduledDate: date });
     if (time) updateService({ scheduledTime: time });
+  }
 
-    hasProcessedParams.current = true;
-  }, [location.search, updateBarber, updateHairstyle, updateService]);
+  hasProcessedParams.current = true;
+}, [location.search, updateBarber, updateHairstyle, updateService]);
 
   // ===== Fetch clients and materials (runs once) =====
   useEffect(() => {
@@ -231,127 +382,231 @@ const Service = () => {
   );
 };
 
-  // ===== Submit =====
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError('');
+  // // ===== Submit =====
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setSubmitting(true);
+  //   setError('');
 
-    try {
-      if (!formData.clientId) {
-        setError('Please select a client');
-        setSubmitting(false);
-        return;
-      }
+  //   try {
+  //     if (!formData.clientId) {
+  //       setError('Please select a client');
+  //       setSubmitting(false);
+  //       return;
+  //     }
 
-      // ===== BUILD MATERIALS LIST FROM UI STATE =====
-      const selectedMaterials = [];
-      let totalMaterialCost = 0;
+  //     // ===== BUILD MATERIALS LIST FROM UI STATE =====
+  //     const selectedMaterials = [];
+  //     let totalMaterialCost = 0;
 
-      Object.keys(materialQuantities).forEach((materialId) => {
-        const quantity = materialQuantities[materialId];
-        const numQuantity = parseFloat(quantity);
+  //     Object.keys(materialQuantities).forEach((materialId) => {
+  //       const quantity = materialQuantities[materialId];
+  //       const numQuantity = parseFloat(quantity);
         
-        if (quantity !== '' && !isNaN(numQuantity) && numQuantity > 0) {
-          const material = materials.find((m) => m._id === materialId);
-          if (material) {
-            const totalCost = numQuantity * material.price;
-            totalMaterialCost += totalCost;
-            selectedMaterials.push({
-              materialId: material._id,
-              name: material.name,
-              quantityUsed: numQuantity,
-              unit: material.unit,
-              costPerUnit: material.price,
-              totalCost: totalCost,
-            });
-          }
-        }
-      });
+  //       if (quantity !== '' && !isNaN(numQuantity) && numQuantity > 0) {
+  //         const material = materials.find((m) => m._id === materialId);
+  //         if (material) {
+  //           const totalCost = numQuantity * material.price;
+  //           totalMaterialCost += totalCost;
+  //           selectedMaterials.push({
+  //             materialId: material._id,
+  //             name: material.name,
+  //             quantityUsed: numQuantity,
+  //             unit: material.unit,
+  //             costPerUnit: material.price,
+  //             totalCost: totalCost,
+  //           });
+  //         }
+  //       }
+  //     });
 
-      // if (selectedMaterials.length === 0) {
-      //   setError('Please select at least one material with quantity > 0');
-      //   setSubmitting(false);
-      //   return;
-      // }
+  //     // if (selectedMaterials.length === 0) {
+  //     //   setError('Please select at least one material with quantity > 0');
+  //     //   setSubmitting(false);
+  //     //   return;
+  //     // }
 
-      // ===== CALCULATE BARBER COST =====
-      const hairstylePrice = hairstyleData?.price || 0;
-      const overhead = parseFloat(formData.overhead) || 0;
-      // const barberCost = (hairstylePrice - totalMaterialCost - overhead) / 2;
-      const barberCost = hairstylePrice / 2;
-      // Update service with costs
-      updateService({
-        costs: {
-          ...serviceData.service.costs,
-          materials: totalMaterialCost,
-          barber: barberCost > 0 ? barberCost : 0,
-          overhead: overhead,
-        },
-      });
+  //     // ===== CALCULATE BARBER COST =====
+  //     const hairstylePrice = hairstyleData?.price || 0;
+  //     const overhead = parseFloat(formData.overhead) || 0;
+  //     // const barberCost = (hairstylePrice - totalMaterialCost - overhead) / 2;
+  //     // const barberCost = hairstylePrice / 2;
+  //     const barberCost = currentOperationsCost / 2;
+      
+  //     // Update service with costs
+  //     updateService({
+  //       costs: {
+  //         ...serviceData.service.costs,
+  //         materials: totalMaterialCost,
+  //         barber: barberCost > 0 ? barberCost : 0,
+  //         overhead: overhead,
+  //       },
+  //     });
 
-      const servicePayload = {
-        client: {
-          _id: serviceData.service.client._id,
-          name: serviceData.service.client.name,
-          email: serviceData.service.client.email,
-          phone: serviceData.service.client.phone,
-        },
-        barber: {
-          _id: serviceData.barber._id,
-        },
-        hairstyle: {
-          _id: serviceData.hairstyle._id,
-        },
-        operations: selectedOperations.map((opId) => ({ operationId: opId })),
-        materials: selectedMaterials.map((m) => ({
-          materialId: m.materialId,
-          quantityUsed: m.quantityUsed,
-        })),
-        scheduledDate: serviceData.service.scheduledDate,
-        scheduledTime: serviceData.service.scheduledTime,
-        pricing: {
-          basePrice: serviceData.hairstyle.price || 0,
-          discount: 0,
-          additionalCharges: [],
-          paymentMethod: 'cash',
-          paymentStatus: 'pending',
-          tip: 0,
-        },
-        costs: {
-          barber: barberCost > 0 ? barberCost : 0,
-          overhead: overhead,
-          additional: [],
-        },
-        status: formData.status,
-        notes: {
-          client: '',
-          barber: '',
-          internal: '',
-        },
-      };
+  //     const servicePayload = {
+  //       client: {
+  //         _id: serviceData.service.client._id,
+  //         name: serviceData.service.client.name,
+  //         email: serviceData.service.client.email,
+  //         phone: serviceData.service.client.phone,
+  //       },
+  //       barber: {
+  //         _id: serviceData.barber._id,
+  //       },
+  //       hairstyle: {
+  //         _id: serviceData.hairstyle._id,
+  //       },
+  //       operations: selectedOperations.map((opId) => ({ operationId: opId })),
+  //       materials: selectedMaterials.map((m) => ({
+  //         materialId: m.materialId,
+  //         quantityUsed: m.quantityUsed,
+  //       })),
+  //       scheduledDate: serviceData.service.scheduledDate,
+  //       scheduledTime: serviceData.service.scheduledTime,
+  //       pricing: {
+  //         basePrice: serviceData.hairstyle.price || 0,
+  //         discount: 0,
+  //         additionalCharges: [],
+  //         paymentMethod: 'cash',
+  //         paymentStatus: 'pending',
+  //         tip: 0,
+  //       },
+  //       costs: {
+  //         barber: barberCost > 0 ? barberCost : 0,
+  //         overhead: overhead,
+  //         additional: [],
+  //       },
+  //       status: formData.status,
+  //       notes: {
+  //         client: '',
+  //         barber: '',
+  //         internal: '',
+  //       },
+  //     };
 
-      console.log('📤 Sending service payload:', servicePayload);
+  //     console.log('📤 Sending service payload:', servicePayload);
 
-      const response = await serviceService.create(servicePayload);
+  //     const response = await serviceService.create(servicePayload);
 
-      if (response.success) {
-        setSuccess(true);
-        setTimeout(() => {
-          resetService();
-          window.close();
-          window.open('/', '_blank');
-        }, 3000);
-      } else {
-        setError(response.message || 'Failed to create service');
-      }
-    } catch (err) {
-      console.error('❌ Error creating service:', err);
-      setError(err.response?.data?.message || 'Error creating service');
-    } finally {
+  //     if (response.success) {
+  //       setSuccess(true);
+  //       setTimeout(() => {
+  //         resetService();
+  //         window.close();
+  //         window.open('/', '_blank');
+  //       }, 3000);
+  //     } else {
+  //       setError(response.message || 'Failed to create service');
+  //     }
+  //   } catch (err) {
+  //     console.error('❌ Error creating service:', err);
+  //     setError(err.response?.data?.message || 'Error creating service');
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
+
+ // ===== Submit =====
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
+  setError('');
+
+  try {
+    if (!formData.clientId) {
+      setError('Please select a client');
       setSubmitting(false);
+      return;
     }
-  };
+
+    // ===== BUILD MATERIALS ARRAY (IDs + quantities only) =====
+    const selectedMaterials = [];
+    Object.keys(materialQuantities).forEach((materialId) => {
+      const quantity = materialQuantities[materialId];
+      const numQuantity = parseFloat(quantity);
+      if (quantity !== '' && !isNaN(numQuantity) && numQuantity > 0) {
+        selectedMaterials.push({
+          materialId: materialId,
+          quantityUsed: numQuantity,
+        });
+      }
+    });
+
+    // ===== BUILD SERVICE PAYLOAD (IDs only for sub-docs) =====
+    const servicePayload = {
+      client: {
+        _id: serviceData.service.client._id,
+        name: serviceData.service.client.name,
+        email: serviceData.service.client.email,
+        phone: serviceData.service.client.phone,
+      },
+      barber: {
+        _id: serviceData.barber._id,
+      },
+      hairstyle: {
+        _id: serviceData.hairstyle._id,
+      },
+      operations: selectedOperations.map((opId) => ({ operationId: opId })),
+      materials: selectedMaterials,
+      scheduledDate: serviceData.service.scheduledDate,
+      scheduledTime: serviceData.service.scheduledTime,
+      pricing: {
+        basePrice: serviceData.hairstyle.price || 0,
+        totalPrice: serviceData.hairstyle.price || 0,
+        discount: 0,
+        additionalCharges: [],
+        paymentMethod: 'cash',
+        paymentStatus: 'pending',
+        tip: 0,
+      },
+      costs: {
+        barber: 0,      // backend recalculates below or use currentOperationsCost/2
+        overhead: parseFloat(formData.overhead) || 0,
+        additional: [],
+      },
+      status: formData.status,
+      notes: {
+        client: '',
+        barber: '',
+        internal: '',
+      },
+    };
+
+    // ===== CALCULATE BARBER COST FRONTEND SIDE (per your formula) =====
+    const currentOperationsCost = selectedOperations.reduce((sum, opId) => {
+      const op = operations.find((o) => o._id === opId);
+      return sum + (op ? op.price : 0);
+    }, 0);
+    servicePayload.costs.barber = currentOperationsCost / 2;
+
+    console.log('📤 Sending service payload:', servicePayload);
+
+    // ===== UPDATE OR CREATE =====
+    let response;
+    if (serviceId) {
+      console.log('📝 Updating service:', serviceId);
+      response = await serviceService.update(serviceId, servicePayload);
+    } else {
+      console.log('🆕 Creating new service');
+      response = await serviceService.create(servicePayload);
+    }
+
+    if (response.success) {
+      setSuccess(true);
+      setTimeout(() => {
+        resetService();
+        window.close();
+      }, 2000);
+    } else {
+      setError(response.message || 'Failed to save service');
+    }
+  } catch (err) {
+    console.error('❌ Error saving service:', err);
+    setError(err.response?.data?.message || 'Error saving service');
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   // ===== Navigation =====
   const goBackToBarber = () => {
@@ -380,16 +635,27 @@ const Service = () => {
     );
   }
 
-  if (success) {
-    return (
-      <div className="page-container">
-        <div className="success-container">
-          <h2>✅ Service Created Successfully!</h2>
-          <p>Redirecting to Calendar...</p>
-        </div>
+  // if (success) {
+  //   return (
+  //     <div className="page-container">
+  //       <div className="success-container">
+  //         <h2>✅ Service Created Successfully!</h2>
+  //         <p>Redirecting to Calendar...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+if (success) {
+  return (
+    <div className="page-container">
+      <div className="success-container">
+        <h2>✅ Service {serviceId ? 'Updated' : 'Created'} Successfully!</h2>
+        <p>Closing window...</p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // ===== Calculate current values for display =====
   const currentMaterialCost = calculateMaterialTotalCost();
@@ -403,7 +669,8 @@ const Service = () => {
 
   return (
     <div className="page-container">
-      <h1>📋 Complete Service</h1>
+      {/* <h1>📋 Complete Service</h1> */}
+      <h1>{serviceId ? '✏️ Edit Service' : '📋 Complete Service'}</h1>
       <p className="subtitle">
         Complete the service details for <strong>{barberData.name}</strong> -{' '}
         <strong>{hairstyleData.name}</strong>
@@ -610,13 +877,22 @@ const Service = () => {
           <Button type="button" variant="secondary" onClick={goBackToBarber}>
             ← Back to Barber
           </Button>
-          <Button
+          {/* <Button
             type="submit"
             variant="success"
             disabled={submitting}
           >
             {submitting ? 'Creating...' : '✅ Create Service'}
-          </Button>
+          </Button> */}
+          <Button
+  type="submit"
+  variant="success"
+  disabled={submitting}
+>
+  {submitting
+    ? (serviceId ? 'Saving...' : 'Creating...')
+    : (serviceId ? '💾 Save Changes' : '✅ Create Service')}
+</Button>
         </div>
       </form>
     </div>

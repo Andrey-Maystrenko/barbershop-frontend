@@ -16,4 +16,15 @@ export const serviceService = {
     const response = await api.delete(`/services/${id}`);
     return response.data;
   },
+
+  getById: async (id) => {
+    const response = await api.get(`/services/${id}`);
+    return response.data;
+  },
+
+  update: async (id, serviceData) => {
+    const response = await api.put(`/services/${id}`, serviceData);
+    return response.data;
+  },
+
 };
