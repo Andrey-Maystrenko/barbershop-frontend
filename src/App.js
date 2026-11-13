@@ -5,6 +5,7 @@ import Calendar from './pages/Calendar/Calendar';
 import Barber from './pages/Barber/Barber';
 import Service from './pages/Service/Service';
 import Timetable from './pages/Timetable/Timetable';  // ← ADD
+import Materials from './pages/Materials/Materials';   // ← ADD
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/barber" element={<Barber />} />
               <Route path="/service" element={<Service />} />
+              <Route path="/materials" element={<Materials />} />   {/* ← ADD */}
             </Routes>
           </main>
         </div>

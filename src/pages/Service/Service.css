@@ -355,7 +355,30 @@
   border-radius: 8px;
   border-left: 4px solid #f44336;
   margin: 15px 0;
-  text-align: center;
+  text-align: left;
+}
+
+.error-message-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.error-details {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+  font-size: 14px;
+}
+
+.error-detail-item {
+  margin: 4px 0;
+  color: #b71c1c;
+}
+
+.error-reason {
+  color: #666;
+  font-style: italic;
+  font-size: 13px;
 }
 
 /* ===== SUCCESS CONTAINER ===== */

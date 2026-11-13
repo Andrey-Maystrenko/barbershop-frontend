@@ -19,6 +19,7 @@ const Service = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState(null);
   const [success, setSuccess] = useState(false);
   const [barberData, setBarberData] = useState(null);
   const [hairstyleData, setHairstyleData] = useState(null);
@@ -511,6 +512,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setSubmitting(true);
   setError('');
+  setValidationErrors(null);
 
   try {
     if (!formData.clientId) {
@@ -592,6 +594,7 @@ const handleSubmit = async (e) => {
     }
 
     if (response.success) {
+      setValidationErrors(null);
       setSuccess(true);
       setTimeout(() => {
         resetService();
@@ -600,12 +603,30 @@ const handleSubmit = async (e) => {
     } else {
       setError(response.message || 'Failed to save service');
     }
-  } catch (err) {
-    console.error('❌ Error saving service:', err);
-    setError(err.response?.data?.message || 'Error saving service');
-  } finally {
-    setSubmitting(false);
+  // } catch (err) {
+  //   console.error('❌ Error saving service:', err);
+  //   setError(err.response?.data?.message || 'Error saving service');
+  // } finally {
+  //   setSubmitting(false);
+  // }
+ } catch (err) {
+  console.error('❌ Error saving service:', err);
+
+  const responseData = err.response?.data;
+  const baseMessage = responseData?.message || 'Error saving service';
+  const detailedErrors = responseData?.errors;
+
+  // Store both the summary and the details
+  setError(baseMessage);
+
+  if (detailedErrors && detailedErrors.length > 0) {
+    setValidationErrors(detailedErrors);
+  } else {
+    setValidationErrors(null);
   }
+} finally {
+  setSubmitting(false);
+}
 };
 
   // ===== Navigation =====
@@ -871,7 +892,23 @@ if (success) {
           )}
         </Card>
 
-        {error && <div className="error-message">{error}</div>}
+        {/* {error && <div className="error-message">{error}</div>} */}
+        {error && (
+  <div className="error-message">
+    <div className="error-message-title">{error}</div>
+    {validationErrors && validationErrors.length > 0 && (
+      <ul className="error-details">
+        {validationErrors.map((err, idx) => (
+          <li key={idx} className="error-detail-item">
+            <strong>{err.name || 'Unknown material'}:</strong>{' '}
+            required {err.required}, available {err.available}
+            {err.reason && <span className="error-reason"> — {err.reason}</span>}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
 
         <div className="button-group">
           <Button type="button" variant="secondary" onClick={goBackToBarber}>

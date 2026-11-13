@@ -156,6 +156,17 @@ const Timetable = () => {
 
   };
 
+  const openMaterialsPage = () => {
+    const url = `${window.location.origin}/materials`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // ===== Handle delete button click =====
   const handleDeleteService = async (serviceId, e) => {
     // Stop the click from bubbling up to the cell
@@ -197,6 +208,17 @@ const Timetable = () => {
 
   return (
     <div className="timetable-page">
+      {/* ===== TOP BAR ===== */}
+      <div className="timetable-topbar">
+        <h2 className="timetable-title">📅 Timetable</h2>
+        <button
+          className="materials-open-button"
+          onClick={openMaterialsPage}
+          title="Open Materials management"
+        >
+          📦 Materials
+        </button>
+      </div>
       {/* ===== HEADER ===== */}
       <div className="timetable-header">
         <button className="nav-button" onClick={goToPreviousMonth} title="Previous month">
