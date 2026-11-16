@@ -1,15 +1,38 @@
+/* ============================================================
+   MATERIALS PAGE — CLEAN LAYOUT
+   ============================================================
+   Structure (from JSX, via Card component):
+     .materials-page
+       .materials-header
+       .notice            (optional)
+       .card              (create form — fixed height)
+       .card              (existing materials — must fill remaining)
+         .card-title
+         .card-body
+           .materials-list  ← scrolls
+
+   The flex chain must be unbroken at every level.
+   ============================================================ */
+
+/* ===== PAGE ===== */
 .materials-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER (fixed) ===== */
 .materials-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    flex-shrink: 0;
 }
 
 .materials-header h1 {
@@ -28,6 +51,7 @@
     cursor: pointer;
     transition: all 0.2s;
     color: #666;
+    flex-shrink: 0;
 }
 
 .close-button:hover {
@@ -36,12 +60,13 @@
     border-color: #dc3545;
 }
 
-/* ===== NOTICES ===== */
+/* ===== NOTICES (fixed) ===== */
 .notice {
     padding: 12px 16px;
     border-radius: 8px;
     margin-bottom: 15px;
     font-size: 14px;
+    flex-shrink: 0;
 }
 
 .notice-success {
@@ -56,37 +81,89 @@
     border-left: 4px solid #f44336;
 }
 
-/* ===== FORM GRID ===== */
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+/* ===== CARDS IN GENERAL ===== */
+.materials-page .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #007bff;
 }
 
-.form-full {
-    grid-column: 1 / -1;
+/* First card (create form) — natural height, never grows */
+.materials-page>.card:first-of-type {
+    flex-shrink: 0;
+    margin-bottom: 15px;
 }
 
-.form-actions {
+/* ===== LAST CARD (existing materials) — fills remaining space ===== */
+.materials-page>.card:last-of-type {
+    flex: 1 1 auto;
     display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 15px;
+    flex-direction: column;
+    min-height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
 }
 
-/* ===== MATERIALS LIST ===== */
-.materials-list {
+.materials-page>.card:last-of-type>.card-title {
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.materials-page>.card:last-of-type>.card-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* ===== MATERIALS LIST — fills card-body, scrolls ===== */
+/* .materials-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-right: 4px;
+} */
+
+.list-of-materials {
+    overflow-y: scroll;
 }
 
+/* Scrollbar */
+.materials-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.materials-list::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 4px;
+}
+
+.materials-list::-webkit-scrollbar-thumb {
+    background: #c1c7cd;
+    border-radius: 4px;
+}
+
+.materials-list::-webkit-scrollbar-thumb:hover {
+    background: #97a1a9;
+}
+
+/* ===== INDIVIDUAL MATERIAL ROW ===== */
 .material-card {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
     border-radius: 8px;
     padding: 14px 18px;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .material-card:hover {
@@ -154,7 +231,7 @@
     color: #c62828;
 }
 
-/* ===== EXPAND PANELS ===== */
+/* ===== EXPAND PANELS (edit / adjust) ===== */
 .expand-panel {
     margin-top: 15px;
     padding-top: 15px;
@@ -168,7 +245,6 @@
     margin-bottom: 15px;
 }
 
-/* ===== ADJUST STOCK ===== */
 .adjust-row {
     display: grid;
     grid-template-columns: auto 1fr 2fr;
@@ -200,15 +276,7 @@
     accent-color: #007bff;
 }
 
-/* ===== EMPTY ===== */
-.empty-text {
-    text-align: center;
-    color: #999;
-    padding: 20px;
-    font-style: italic;
-}
-
-/* ===== COLLAPSIBLE HEADER ===== */
+/* ===== COLLAPSIBLE HEADER (create form) ===== */
 .collapsible-header {
     display: flex;
     justify-content: space-between;
@@ -240,50 +308,38 @@
 }
 
 .collapsible-body {
+    /* height: 100vh; */
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px dashed #e0e0e0;
+    overflow-y: scroll;
 }
 
-/* ===== FULL-HEIGHT PAGE LAYOUT ===== */
-.materials-page {
+/* ===== FORM GRID ===== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    column-gap: 15px;
+    row-gap: 0px;
+}
+
+.form-full {
+    grid-column: 1 / -1;
+}
+
+.form-actions {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+/* ===== EMPTY ===== */
+.empty-text {
+    text-align: center;
+    color: #999;
     padding: 20px;
-    box-sizing: border-box;
-    margin: -20px;
-    /* cancel parent's padding (App.css .main-content) */
-    padding: 20px;
-    /* re-apply padding here */
-}
-
-/* ===== EXISTING MATERIALS CARD GROWS ===== */
-.materials-page>.card:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin-bottom: 0;
-    /* Debug border — remove after fixing */
-    /* border: 2px solid red; */
-}
-
-.materials-page>.card:last-child>.card-body {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    /* Debug border — remove after fixing */
-    /* border: 2px solid blue; */
-}
-
-.materials-page>.card:last-child>.card-body>.materials-list {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    min-height: 0;
-    /* Debug border — remove after fixing */
-    /* border: 2px solid green; */
+    font-style: italic;
 }
 
 /* ===== RESPONSIVE ===== */

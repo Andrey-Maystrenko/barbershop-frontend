@@ -431,7 +431,8 @@ const Materials = () => {
         {materials.length === 0 ? (
           <p className="empty-text">No materials yet. Click "Add New Material" above.</p>
         ) : (
-          <div className="materials-list">
+          // <div className="materials-list">
+          <div className="list-of-materials">
             {materials.map((material) => {
               const isEditing = editingId === material._id;
               const isAdjusting = adjustingId === material._id;
@@ -639,8 +640,8 @@ const Materials = () => {
                           {adjusting
                             ? 'Applying...'
                             : adjustForm.action === 'add'
-                            ? '➕ Add to Stock'
-                            : '➖ Use from Stock'}
+                              ? '➕ Add to Stock'
+                              : '➖ Use from Stock'}
                         </Button>
                       </div>
                     </form>
