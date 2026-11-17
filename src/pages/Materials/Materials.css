@@ -138,21 +138,21 @@
 }
 
 /* Scrollbar */
-.materials-list::-webkit-scrollbar {
+.list-of-materials::-webkit-scrollbar {
     width: 8px;
 }
 
-.materials-list::-webkit-scrollbar-track {
+.list-of-materials::-webkit-scrollbar-track {
     background: #f1f3f5;
     border-radius: 4px;
 }
 
-.materials-list::-webkit-scrollbar-thumb {
+.list-of-materials::-webkit-scrollbar-thumb {
     background: #c1c7cd;
     border-radius: 4px;
 }
 
-.materials-list::-webkit-scrollbar-thumb:hover {
+.list-of-materials::-webkit-scrollbar-thumb:hover {
     background: #97a1a9;
 }
 

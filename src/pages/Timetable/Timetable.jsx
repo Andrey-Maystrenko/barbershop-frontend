@@ -167,6 +167,50 @@ const Timetable = () => {
     document.body.removeChild(link);
   };
 
+  const openBarbersPage = () => {
+    const url = `${window.location.origin}/barbers`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const openClientsPage = () => {
+    const url = `${window.location.origin}/clients`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const openOperationsPage = () => {
+    const url = `${window.location.origin}/operations`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const openHairstylesPage = () => {
+    const url = `${window.location.origin}/hairstyles`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // ===== Handle delete button click =====
   const handleDeleteService = async (serviceId, e) => {
     // Stop the click from bubbling up to the cell
@@ -209,14 +253,40 @@ const Timetable = () => {
   return (
     <div className="timetable-page">
       {/* ===== TOP BAR ===== */}
-      <div className="timetable-topbar">
+      {/* <div className="timetable-topbar">
         <h2 className="timetable-title">📅 Timetable</h2>
-        <button
-          className="materials-open-button"
-          onClick={openMaterialsPage}
-          title="Open Materials management"
-        >
+        <div className="topbar-buttons">
+          <button
+            className="topbar-button materials-button"
+            onClick={openMaterialsPage}
+            title="Open Materials management"
+          >
+            📦 Materials
+          </button>
+          <button
+            className="topbar-button barbers-button"
+            onClick={openBarbersPage}
+            title="Open Barbers management"
+          >
+            💈 Barbers
+          </button>
+        </div>
+      </div> */}
+      <div className="topbar-buttons">
+        <button className="topbar-button materials-button" onClick={openMaterialsPage} title="Open Materials management">
           📦 Materials
+        </button>
+        <button className="topbar-button barbers-button" onClick={openBarbersPage} title="Open Barbers management">
+          💈 Barbers
+        </button>
+        <button className="topbar-button clients-button" onClick={openClientsPage} title="Open Clients management">
+          👥 Clients
+        </button>
+        <button className="topbar-button operations-button" onClick={openOperationsPage} title="Open Operations management">
+          ➕ Operations
+        </button>
+        <button className="topbar-button hairstyles-button" onClick={openHairstylesPage} title="Open Hairstyles management">
+          💇 Hairstyles
         </button>
       </div>
       {/* ===== HEADER ===== */}

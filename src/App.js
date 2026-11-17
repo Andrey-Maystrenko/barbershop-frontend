@@ -6,6 +6,10 @@ import Barber from './pages/Barber/Barber';
 import Service from './pages/Service/Service';
 import Timetable from './pages/Timetable/Timetable';  // ← ADD
 import Materials from './pages/Materials/Materials';   // ← ADD
+import Barbers from './pages/Barbers/Barbers';
+import Clients from './pages/Clients/Clients';
+import Operations from './pages/Operations/Operations';
+import Hairstyles from './pages/Hairstyles/Hairstyles';
 import './App.css';
 
 function App() {
@@ -22,6 +26,10 @@ function App() {
               <Route path="/barber" element={<Barber />} />
               <Route path="/service" element={<Service />} />
               <Route path="/materials" element={<Materials />} />   {/* ← ADD */}
+              <Route path="/barbers" element={<Barbers />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/operations" element={<Operations />} />
+              <Route path="/hairstyles" element={<Hairstyles />} />
             </Routes>
           </main>
         </div>

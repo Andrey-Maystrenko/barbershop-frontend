@@ -285,7 +285,7 @@
     margin: 0;
 }
 
-.materials-open-button {
+/* .materials-open-button {
     background: #007bff;
     color: white;
     border: none;
@@ -301,6 +301,73 @@
     background: #0056b3;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+} */
+
+/* ===== TOP BAR BUTTONS ===== */
+.topbar-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.topbar-button {
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+}
+
+.materials-button {
+    background: #007bff;
+}
+
+.materials-button:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.barbers-button {
+    background: #28a745;
+}
+
+.barbers-button:hover {
+    background: #1e7e34;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.clients-button {
+    background: #6f42c1;
+}
+
+.clients-button:hover {
+    background: #5a32a3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);
+}
+
+.operations-button {
+    background: #fd7e14;
+}
+
+.operations-button:hover {
+    background: #e06700;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(253, 126, 20, 0.3);
+}
+
+.hairstyles-button {
+    background: #20c997;
+}
+
+.hairstyles-button:hover {
+    background: #17a589;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(32, 201, 151, 0.3);
 }
 
 /* ===== RESPONSIVE ===== */
